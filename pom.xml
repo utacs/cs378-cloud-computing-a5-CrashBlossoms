@@ -7,7 +7,7 @@
 	<name>Hadoop MapReduce</name>
 	<description>A Hadoop MapReduce example </description>
 	<groupId>edu.cs.utexas.HadoopEx</groupId>
-	<artifactId>MapReduce-WordCount-example</artifactId>
+	<artifactId>Gradient-Descent</artifactId>
 	<version>0.1-SNAPSHOT</version>
 
 
@@ -35,7 +35,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>edu.cs.utexas.HadoopEx.WordCount</mainClass>
+							<mainClass>edu.cs.utexas.HadoopEx.TaxiGradientDescentMain</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

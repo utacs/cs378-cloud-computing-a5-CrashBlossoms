@@ -7,7 +7,7 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-public class WordCountMapper extends Mapper<Object, Text, Text, IntWritable> {
+public class GradientDescentMapper extends Mapper<Object, Text, Text, IntWritable> {
 
 	// Create a counter and initialize with 1
 	private final IntWritable counter = new IntWritable(1);
