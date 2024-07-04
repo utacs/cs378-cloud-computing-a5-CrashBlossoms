@@ -1,11 +1,13 @@
 package edu.cs.utexas.HadoopEx;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DoubleWritable;
-import org.apache.hadoop.io.FloatWritable;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
@@ -34,15 +36,15 @@ public class TaxiMain extends Configured implements Tool {
 	}
 
 	public int run(String[] args) throws ClassNotFoundException, IOException, InterruptedException {
-		doJob1(args[0], "SLR_" + args[1]);
+		doTask1(args[0], "SLR_" + args[1]);
 		System.out.println("FINISHED JOB 1");
 
-		//doJob2(args[0], "GPS_" + args[1]);
-		//System.out.println("FINISHED JOB 2");
+		doTask2(args[0], "GRD_" + args[1]);
+		System.out.println("FINISHED JOB 2");
 		return 0;
 	}
 
-	public static int doJob1(String inputPath, String outputPath) throws IOException, ClassNotFoundException, InterruptedException {
+	public static int doTask1(String inputPath, String outputPath) throws IOException, ClassNotFoundException, InterruptedException {
 		Configuration conf1 = new Configuration();
         Job job1 = Job.getInstance(conf1, "Simple Linear Regression");
 		job1.setJarByClass(TaxiMain.class);
@@ -61,21 +63,46 @@ public class TaxiMain extends Configured implements Tool {
 	}
 	//java -jar target/Gradient-Descent-0.1-SNAPSHOT-jar-with-dependencies.jar SOME-Text-Fiel.txt  output
 
-	public static int doJob2(String inputPath, String outputPath) throws IOException, ClassNotFoundException, InterruptedException {
+	public static void doTask2(String inputPath, String outputPathPart) throws IOException, ClassNotFoundException, InterruptedException {
 		Configuration conf2 = new Configuration();
-		Job job2 = Job.getInstance(conf2, "GPS Erros");
-		job2.setJarByClass(TaxiMain.class);
-        job2.setMapperClass(GradientDescentMapper.class);
-        job2.setReducerClass(GradientDescentReducer.class);
-        job2.setOutputKeyClass(Text.class);
-        job2.setOutputValueClass(IntWritable.class);
-		
-		FileInputFormat.addInputPath(job2, new Path(inputPath));
-		job2.setInputFormatClass(TextInputFormat.class);
 
-		FileOutputFormat.setOutputPath(job2, new Path(outputPath));
-		job2.setOutputFormatClass(TextOutputFormat.class);
-		
-		return (job2.waitForCompletion(true) ? 0 : 1);
+		double alpha = 0.1; // Learning rate
+        int iterations = 100; // Number of iterations
+        double m = 0.0; // Initial slope
+        double b = 0.0; // Initial intercept
+		conf2.set("alpha", String.valueOf(alpha));
+
+		for (int i = 0; i < iterations; i++) {
+
+			conf2.set("m", String.valueOf(m));
+			conf2.set("b", String.valueOf(b));
+			String outputPath = outputPathPart + "_iter_" + i;
+
+			Job job2 = Job.getInstance(conf2, "Gradient Descent");
+			job2.setJarByClass(TaxiMain.class);
+			job2.setMapperClass(GradientDescentMapper.class);
+			job2.setReducerClass(GradientDescentReducer.class);
+			job2.setOutputKeyClass(Text.class);
+			job2.setOutputValueClass(DoubleWritable.class);
+
+			FileInputFormat.addInputPath(job2, new Path(inputPath));
+			job2.setInputFormatClass(TextInputFormat.class);
+	
+			FileOutputFormat.setOutputPath(job2, new Path(outputPath));
+			job2.setOutputFormatClass(TextOutputFormat.class);
+
+			job2.waitForCompletion(true);
+
+			// update m and b 
+            Path outputFilePath = new Path(outputPath, "part-r-00000");
+            FileSystem fs = FileSystem.get(conf2);
+            BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(outputFilePath)));
+			double new_m = Double.parseDouble((br.readLine().split("	"))[1]); //get the next value of m from output file
+			double new_b = Double.parseDouble((br.readLine().split("	"))[1]); //get the next value of b from output file
+			br.close();
+			m = new_m;
+			b = new_b;
+		}
 	}
+
 }

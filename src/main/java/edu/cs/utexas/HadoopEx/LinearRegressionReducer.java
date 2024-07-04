@@ -32,8 +32,9 @@ public class LinearRegressionReducer extends  Reducer<Text, DoubleWritable, Text
    
    public void cleanup(Context context) throws IOException, InterruptedException {
         double denom_result = ((count * sumX2) - (sumX * sumX));
+
         double slope = ((count * sumXY) - (sumX * sumY)) / denom_result;
-        double intercept = ((sumX2 * sumY) - (sumX - sumXY)) / denom_result;
+        double intercept = ((sumX2 * sumY) - (sumX * sumXY)) / denom_result;
 
         context.write(new Text("Slope"), new DoubleWritable(slope));
         context.write(new Text("Intercept"), new DoubleWritable(intercept));
