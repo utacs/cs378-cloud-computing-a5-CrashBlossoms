@@ -15,7 +15,8 @@
 ##  Course Name: CS378 - Cloud Computing 
 
 ##  Unique Number: 51515
-    
+   
+   java -jar target/Gradient-Descent-0.1-SNAPSHOT-jar-with-dependencies.jar SOME-Text-Fiel.txt  output
 
 
 # Add your Project REPORT HERE 
