@@ -2,21 +2,25 @@
 
 ## Team members' names 
 
-1. Student Name:
+1. Student Name: Alex Chavez
 
-   Student UT EID:
+   Student UT EID: ajc6226
 
-2. Student Name:
+2. Student Name: Nick Pannell
 
-   Student UT EID:
+   Student UT EID: nap2598
 
- ...
+3. Student Name: Jerry Ehimuh
+
+   Student UT EID: jee2352
 
 ##  Course Name: CS378 - Cloud Computing 
 
 ##  Unique Number: 51515
-   
-   java -jar target/Gradient-Descent-0.1-SNAPSHOT-jar-with-dependencies.jar SOME-Text-Fiel.txt  output
+   To run the code:
+   Use "mvn clean package" to get a .jar file named "Gradient-Descent-0.1-SNAPSHOT-jar-with-dependencies.jar". Place the dataset in the same directory as the pom file. Run the code with "java -jar target/Gradient-Descent-0.1-SNAPSHOT-jar-with-dependencies.jar <input file name> <output dir name>".
+
+   Output for the tasks will be in directories starting with "SLR" (simple linear regression), "GRD" (gradient descent), and "MGD" (multiple gradient descent).
 
 
 # Add your Project REPORT HERE 
